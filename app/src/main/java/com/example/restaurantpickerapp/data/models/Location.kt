@@ -1,4 +1,4 @@
-package com.example.restaurantpickerapp.data
+package com.example.restaurantpickerapp.data.models
 
 import kotlinx.serialization.Serializable
 
