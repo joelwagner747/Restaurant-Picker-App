@@ -5,6 +5,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Restaurant(
+    @SerialName(value = "place_id")
+    val id: String,
     val name: String,
     @SerialName(value = "price_level")
     val priceLevel: Int = -1,
@@ -15,5 +17,6 @@ data class Restaurant(
     val address: String,
     @SerialName(value = "open_now")
     val openNow: Boolean,
-    val businessStatus: String
+    val businessStatus: String,
+    var keyword: String? = null
 )
