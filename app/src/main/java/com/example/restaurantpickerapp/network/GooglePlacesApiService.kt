@@ -1,6 +1,7 @@
 package com.example.restaurantpickerapp.network
 
 import com.example.restaurantpickerapp.data.models.City
+import com.example.restaurantpickerapp.data.models.CitySuggestionsResponse
 import com.example.restaurantpickerapp.data.models.Location
 import com.example.restaurantpickerapp.data.models.Restaurant
 import retrofit2.http.GET
@@ -18,16 +19,16 @@ interface GooglePlacesApiService {
 
     @GET("autocomplete/json")
     suspend fun getCity(
-        @Query("input") city: String,
+        @Query("input") cityAndState: String,
         @Query("types") type: String = "(cities)",
         @Query("components") components: String = "country:us",
         @Query("key") apiKey: String
-    ) : List<City>
+    ) : CitySuggestionsResponse
 
     @GET("details/json")
     suspend fun getCityLatLong(
         @Query("place_id") id: String,
         @Query("fields") fields: String = "geometry",
         @Query("key") apiKey: String
-    ) : Location
+    ) : Location?
 }

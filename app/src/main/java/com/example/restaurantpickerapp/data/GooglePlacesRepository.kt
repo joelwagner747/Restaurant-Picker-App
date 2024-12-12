@@ -11,31 +11,35 @@ class GooglePlacesRepository(
 ): PlacesRepository {
 
     override suspend fun getRestaurants(
-        lat: String,
-        lon: String,
+        cityId: String,
+        meal: String,
         keywords: List<String>
     ): List<Restaurant> {
+        val location = googlePlacesApiService.getCityLatLong(
+            id = cityId,
+            apiKey = apiKey
+        )
         val restaurantMap: MutableMap<String, Restaurant> = mutableMapOf<String, Restaurant>()
-        keywords.forEach { keyword ->
-            val listOfResults = googlePlacesApiService.getRestaurants(
-                location = "$lat,$lon",
-                keyword = keyword,
-                apiKey = apiKey
-            )
-            listOfResults.forEach { result: Restaurant ->
-                result.keyword = keyword
-                restaurantMap[result.id] = result
+        if (location != null) {
+            keywords.forEach { keyword ->
+                val listOfResults = googlePlacesApiService.getRestaurants(
+                    location = "${location.lat},${location.lng}",
+                    keyword = "$meal+$keyword",
+                    apiKey = apiKey
+                )
+                listOfResults.forEach { result: Restaurant ->
+                    if (result.openNow) {
+                        result.keyword = keyword
+                        restaurantMap[result.id] = result
+                    }
+                }
             }
         }
 
         return restaurantMap.values.toList()
     }
 
-    override suspend fun getCityByName(cityName: String): List<City> {
-        return googlePlacesApiService.getCity(city = cityName, apiKey = apiKey)
-    }
-
-    override suspend fun getLatLonOfCity(id: String): Location {
-        return googlePlacesApiService.getCityLatLong(id = id, apiKey = apiKey)
+    override suspend fun getCityByName(cityName: String, state: String): List<City> {
+        return googlePlacesApiService.getCity(cityAndState = "$cityName+$state", apiKey = apiKey).predictions
     }
 }

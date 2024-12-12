@@ -14,7 +14,7 @@ class DefaultAppContainer : AppContainerInterface {
     private val apiKey = BuildConfig.Google_Places_API_KEY
 
     private val retrofit: Retrofit = Retrofit.Builder()
-        .addConverterFactory(Json.asConverterFactory("applications/json".toMediaType()))
+        .addConverterFactory(Json { ignoreUnknownKeys = true }.asConverterFactory("applications/json".toMediaType()))
         .baseUrl(baseUrl)
         .build()
 
@@ -24,5 +24,9 @@ class DefaultAppContainer : AppContainerInterface {
 
     override val placesRepository: PlacesRepository by lazy {
         GooglePlacesRepository(retrofitService, apiKey)
+    }
+
+    override val selectionOptionsRepository: SelectionOptionsRepositoryInterface by lazy {
+        SelectionOptionsRepository()
     }
 }

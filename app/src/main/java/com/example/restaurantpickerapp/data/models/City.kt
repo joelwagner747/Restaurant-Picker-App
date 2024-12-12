@@ -10,3 +10,8 @@ data class City(
     @SerialName(value = "place_id")
     val placeId: String
 )
+
+@Serializable
+data class CitySuggestionsResponse(
+    val predictions: List<City>
+)

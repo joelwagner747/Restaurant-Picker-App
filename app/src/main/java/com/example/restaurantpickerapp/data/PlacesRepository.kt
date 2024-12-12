@@ -5,9 +5,7 @@ import com.example.restaurantpickerapp.data.models.Location
 import com.example.restaurantpickerapp.data.models.Restaurant
 
 interface PlacesRepository {
-    suspend fun getRestaurants(lat: String, lon: String, keywords: List<String>) : List<Restaurant>
+    suspend fun getRestaurants(cityId: String, meal: String, keywords: List<String>) : List<Restaurant>
 
-    suspend fun getCityByName(cityName: String) : List<City>
-
-    suspend fun getLatLonOfCity(id: String) : Location
+    suspend fun getCityByName(cityName: String, state: String) : List<City>
 }
