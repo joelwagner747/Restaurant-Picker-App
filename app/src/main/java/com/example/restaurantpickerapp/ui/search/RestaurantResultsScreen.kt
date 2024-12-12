@@ -20,6 +20,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.addPathNodes
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -49,6 +50,7 @@ fun RestaurantResultsScreen(
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val searchCityUiState by viewModel.uiState.collectAsState()
+    val favoritesUiState by viewModel.favoritesUiState.collectAsState()
     val pricesMap: Map<Int, Price> = mapOf(
         1 to Price.ONE,
         2 to Price.TWO,
@@ -76,6 +78,8 @@ fun RestaurantResultsScreen(
             restaurantResults = searchCityUiState.searchedRestaurants,
             pricesMap = pricesMap,
             retryAction = { viewModel.searchForRestaurants() },
+            addToFavorites = { viewModel.addToFavorites(it) },
+            favoritesIdsSet = favoritesUiState.toSet(),
             modifier = Modifier.padding(innerPadding)
         )
     }
@@ -86,6 +90,8 @@ fun RestaurantResultsBody(
     restaurantResults: SearchedRestaurantsState,
     pricesMap: Map<Int, Price>,
     retryAction: () -> Unit,
+    addToFavorites: (Restaurant) -> Unit,
+    favoritesIdsSet: Set<String>,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -96,7 +102,9 @@ fun RestaurantResultsBody(
         when(restaurantResults) {
             is SearchedRestaurantsState.Success -> DisplayRestaurantResults(
                 restaurantResults = restaurantResults.searchedRestaurants,
-                pricesMap = pricesMap
+                pricesMap = pricesMap,
+                addToFavorites = addToFavorites,
+                favoritesIdsSet = favoritesIdsSet
             )
             is SearchedRestaurantsState.Loading -> LoadingScreen(modifier = modifier.fillMaxSize())
             is SearchedRestaurantsState.Error -> ErrorScreenRestaurant(
@@ -112,6 +120,8 @@ fun RestaurantResultsBody(
 fun DisplayRestaurantResults(
     restaurantResults: List<Restaurant>,
     pricesMap: Map<Int, Price>,
+    addToFavorites: (Restaurant) -> Unit,
+    favoritesIdsSet: Set<String>,
     modifier: Modifier = Modifier
 ) {
     if (restaurantResults.isNotEmpty()) {
@@ -122,6 +132,8 @@ fun DisplayRestaurantResults(
                 RestaurantItem(
                     restaurant = restaurant,
                     pricesMap = pricesMap,
+                    favoritesIdsSet = favoritesIdsSet,
+                    addToFavorites = addToFavorites
                 )
             }
         }
@@ -157,6 +169,8 @@ fun ErrorScreenRestaurant(
 fun RestaurantItem(
     restaurant: Restaurant,
     pricesMap: Map<Int, Price>,
+    addToFavorites: (Restaurant) -> Unit,
+    favoritesIdsSet: Set<String>,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -166,6 +180,15 @@ fun RestaurantItem(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
+            if (!favoritesIdsSet.contains(restaurant.id)) {
+                Button(
+                    onClick = { addToFavorites(restaurant) }
+                ) {
+                    Text(stringResource(R.string.add_to_favorites))
+                }
+            } else {
+                Text("Favorite")
+            }
             Text(restaurant.name ?: "Not available")
             Text(restaurant.keyword ?: "Not available")
             Text("Rating: ${restaurant.rating}")

@@ -17,4 +17,8 @@ class OfflineRestaurantsRepository(
     override suspend fun insertItem(restaurant: RestaurantEntity) {
         return restaurantDao.insert(restaurant)
     }
+
+    override fun getAllRestaurantsIdsStream(): Flow<List<String>> {
+        return restaurantDao.getAllRestaurantIds()
+    }
 }

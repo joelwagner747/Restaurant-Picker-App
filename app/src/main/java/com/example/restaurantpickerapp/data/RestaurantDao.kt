@@ -18,4 +18,7 @@ interface RestaurantDao {
 
     @Query("SELECT * FROM restaurants ORDER BY name ASC")
     fun getAllRestaurants(): Flow<List<RestaurantEntity>>
+
+    @Query("SELECT id FROM restaurants")
+    fun getAllRestaurantIds(): Flow<List<String>>
 }

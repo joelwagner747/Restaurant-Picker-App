@@ -2,18 +2,22 @@ package com.example.restaurantpickerapp.ui.search
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.restaurantpickerapp.data.PlacesRepository
+import com.example.restaurantpickerapp.data.RestaurantRepository
 import com.example.restaurantpickerapp.data.SelectionOptionsRepositoryInterface
 import com.example.restaurantpickerapp.data.models.City
 import com.example.restaurantpickerapp.data.models.Price
+import com.example.restaurantpickerapp.data.models.Restaurant
+import com.example.restaurantpickerapp.data.models.RestaurantEntity
 import com.example.restaurantpickerapp.ui.search.model.FoodSearchType
 import com.example.restaurantpickerapp.ui.search.model.PossibleCityState
 import com.example.restaurantpickerapp.ui.search.model.SearchUiState
 import com.example.restaurantpickerapp.ui.search.model.SearchedRestaurantsState
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.io.IOException
@@ -21,14 +25,24 @@ import java.io.IOException
 
 class SearchViewModel(
     private val googlePlacesRepository: PlacesRepository,
-    private val selectionOptionsRepository: SelectionOptionsRepositoryInterface
+    private val selectionOptionsRepository: SelectionOptionsRepositoryInterface,
+    private val restaurantsRepository: RestaurantRepository
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(SearchUiState(
         keywords = mutableSetOf<String>(),
         cityName = "",
         state = ""
     ))
+    companion object {
+        private const val TIMEOUT_MILLIS = 5_000L
+    }
     val uiState: StateFlow<SearchUiState> = _uiState.asStateFlow()
+    val favoritesUiState: StateFlow<List<String>> = restaurantsRepository.getAllRestaurantsIdsStream()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
+            initialValue = listOf()
+        )
 
     fun changeCityName(cityName: String) {
         _uiState.update { currentState ->
@@ -89,6 +103,16 @@ class SearchViewModel(
         _uiState.update { currentState ->
             currentState.copy(
                 currentFoodSearchType = newFoodSearchType
+            )
+        }
+    }
+
+    fun clearSearch() {
+        _uiState.update {
+            SearchUiState(
+                keywords = mutableSetOf<String>(),
+                cityName = "",
+                state = ""
             )
         }
     }
@@ -154,6 +178,15 @@ class SearchViewModel(
         }
     }
 
+    fun addToFavorites(restaurant: Restaurant) {
+        if (validateRestaurant(restaurant)) {
+            val restaurantEntity = convertRestaurantToRestaurantEntity(restaurant)
+            viewModelScope.launch {
+                restaurantsRepository.insertItem(restaurantEntity)
+            }
+        }
+    }
+
     fun getMealsOptions() : List<Int> {
         return selectionOptionsRepository.getMealOptions()
     }
@@ -181,4 +214,19 @@ class SearchViewModel(
     fun getPriceChoices() : List<Price> {
         return selectionOptionsRepository.getPriceChoices()
     }
+}
+
+fun convertRestaurantToRestaurantEntity(restaurant: Restaurant) : RestaurantEntity {
+    return RestaurantEntity(
+        id = restaurant.id ?: "",
+        name = restaurant.name ?: "",
+        priceLevel = restaurant.priceLevel,
+        rating = restaurant.rating,
+        numOfUserRatings = restaurant.numOfUserRatings,
+        address = restaurant.address ?: ""
+    )
+}
+
+fun validateRestaurant(restaurant: Restaurant) : Boolean {
+    return restaurant.id != null && restaurant.name != null && restaurant.address != null
 }

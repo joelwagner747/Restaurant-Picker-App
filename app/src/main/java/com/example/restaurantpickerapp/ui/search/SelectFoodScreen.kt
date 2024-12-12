@@ -1,6 +1,7 @@
 package com.example.restaurantpickerapp.ui.search
 
 import androidx.annotation.StringRes
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -9,8 +10,10 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -23,7 +26,9 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import com.example.restaurantpickerapp.BottomBar
 import com.example.restaurantpickerapp.R
 import com.example.restaurantpickerapp.RestaurantPickerTopAppBar
@@ -151,9 +156,11 @@ fun SelectFoodBody(
                 searchForRestaurants()
                 navigateToNext()
             },
-            enabled = keywords.isNotEmpty()
+            enabled = keywords.isNotEmpty(),
+            shape = RoundedCornerShape(8.dp),
+            modifier = Modifier.size(height = 60.dp, width = 150.dp)
         ) {
-            Text(stringResource(R.string.search))
+            Text(stringResource(R.string.search), style = MaterialTheme.typography.bodyLarge)
         }
 
     }
@@ -167,10 +174,20 @@ fun FoodItem(
     modifier: Modifier = Modifier
 ) {
     Card(
-        modifier = modifier.clickable(true, onClick = { changeKeyWord(food) }),
-        colors = CardDefaults.cardColors(containerColor = if (keywords.contains(food)) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.background)
+        modifier = modifier
+            .clickable(true, onClick = { changeKeyWord(food) })
+            .padding(dimensionResource(R.dimen.padding_medium))
+            .border(1.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(14.dp))
+            .size(width = 250.dp, height = 50.dp),
+        colors = CardDefaults.cardColors(containerColor = if (keywords.contains(food)) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.outline)
     ) {
-        Text(food)
+        Column (
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(food)
+        }
     }
 }
 

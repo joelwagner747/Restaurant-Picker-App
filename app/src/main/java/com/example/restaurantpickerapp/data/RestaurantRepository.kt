@@ -8,6 +8,8 @@ interface RestaurantRepository {
 
     fun getAllRestaurantStream(): Flow<List<RestaurantEntity>>
 
+    fun getAllRestaurantsIdsStream(): Flow<List<String>>
+
     suspend fun insertItem(restaurant: RestaurantEntity)
 
     suspend fun deleteItem(restaurant: RestaurantEntity)

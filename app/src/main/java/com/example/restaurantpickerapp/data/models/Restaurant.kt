@@ -19,7 +19,7 @@ data class Restaurant(
     val openHours: OpenHours? = null,
     @SerialName(value = "business_status")
     val businessStatus: String? = null,
-    var keyword: String? = null
+    var keyword: String? = null,
 )
 
 @Serializable
