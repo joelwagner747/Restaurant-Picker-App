@@ -38,34 +38,49 @@ fun RestaurantPickerNavHost(
             composable(SearchCityDestination.route) {
                 SearchCityScreen(
                     viewModel = searchViewModel,
-                    navigateToPriceChoice = { navController.navigate(PriceChoiceDestination.route) }
+                    navigateToPriceChoice = { navController.navigate(PriceChoiceDestination.route) },
+                    onHomeButtonClicked = { TODO() },
+                    onFavoriteButtonClicked = { TODO() },
+                    onSearchButtonClicked = { TODO() }
                 )
             }
             composable(PriceChoiceDestination.route) {
                 PriceChoiceScreen(
                     viewModel = searchViewModel,
                     navigateBack = { navController.popBackStack() },
-                    navigateToSelectMeal = { navController.navigate(SelectMealDestination.route) }
+                    navigateToSelectMeal = { navController.navigate(SelectMealDestination.route) },
+                    onHomeButtonClicked = { TODO() },
+                    onFavoriteButtonClicked = { TODO() },
+                    onSearchButtonClicked = { TODO() }
                 )
             }
             composable(SelectMealDestination.route) {
                 SelectMealScreen(
                     navigateBack = { navController.popBackStack() },
                     viewModel = searchViewModel,
-                    navigateToNext = { navController.navigate(SelectFoodDestination.route) }
+                    navigateToNext = { navController.navigate(SelectFoodDestination.route) },
+                    onHomeButtonClicked = { TODO() },
+                    onFavoriteButtonClicked = { TODO() },
+                    onSearchButtonClicked = { TODO() }
                 )
             }
             composable(SelectFoodDestination.route) {
                 SelectFoodScreen(
                     viewModel = searchViewModel,
                     navigateBack = { navController.popBackStack() },
-                    navigateToNext = { navController.navigate(RestaurantResultsDestination.route) }
+                    navigateToNext = { navController.navigate(RestaurantResultsDestination.route) },
+                    onHomeButtonClicked = { TODO() },
+                    onFavoriteButtonClicked = { TODO() },
+                    onSearchButtonClicked = { TODO() }
                 )
             }
             composable(RestaurantResultsDestination.route) {
                 RestaurantResultsScreen(
                     viewModel = searchViewModel,
-                    navigateBack = { navController.popBackStack() }
+                    navigateBack = { navController.popBackStack() },
+                    onHomeButtonClicked = { TODO() },
+                    onFavoriteButtonClicked = { TODO() },
+                    onSearchButtonClicked = { TODO() }
                 )
             }
         }

@@ -23,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.restaurantpickerapp.BottomBar
 import com.example.restaurantpickerapp.R
 import com.example.restaurantpickerapp.RestaurantPickerTopAppBar
 import com.example.restaurantpickerapp.data.models.Price
@@ -41,6 +42,9 @@ object RestaurantResultsDestination : NavigationDestination {
 fun RestaurantResultsScreen(
     viewModel: SearchViewModel,
     navigateBack: () -> Unit,
+    onHomeButtonClicked: () -> Unit,
+    onFavoriteButtonClicked: () -> Unit,
+    onSearchButtonClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
@@ -58,6 +62,13 @@ fun RestaurantResultsScreen(
                 canNavigateBack = true,
                 navigateUp = navigateBack,
                 scrollBehavior = scrollBehavior
+            )
+        },
+        bottomBar = {
+            BottomBar(
+                onHomeButtonClicked = onHomeButtonClicked,
+                onSearchButtonClicked = onSearchButtonClicked,
+                onFavoriteButtonClicked = onFavoriteButtonClicked
             )
         }
     ) { innerPadding ->

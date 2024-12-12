@@ -71,4 +71,6 @@
     <string name="by_region">By Region</string>
     <string name="search">Search</string>
     <string name="here_is_where_you_can_go">Here is where you can go</string>
+    <string name="home">Home</string>
+    <string name="favorites">Favorites</string>
 </resources>

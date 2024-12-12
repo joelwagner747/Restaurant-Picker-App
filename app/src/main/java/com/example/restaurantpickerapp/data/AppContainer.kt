@@ -1,13 +1,15 @@
 package com.example.restaurantpickerapp.data
 
+import android.content.Context
 import com.example.restaurantpickerapp.BuildConfig
+import com.example.restaurantpickerapp.data.models.RestaurantDatabase
 import com.example.restaurantpickerapp.network.GooglePlacesApiService
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import retrofit2.Retrofit
 import retrofit2.converter.kotlinx.serialization.asConverterFactory
 
-class DefaultAppContainer : AppContainerInterface {
+class DefaultAppContainer(private val context: Context) : AppContainerInterface {
 
     private val baseUrl = "https://maps.googleapis.com/maps/api/place/"
 
@@ -28,5 +30,9 @@ class DefaultAppContainer : AppContainerInterface {
 
     override val selectionOptionsRepository: SelectionOptionsRepositoryInterface by lazy {
         SelectionOptionsRepository()
+    }
+
+    override val restaurantRepository: RestaurantRepository by lazy {
+        OfflineRestaurantsRepository(RestaurantDatabase.getDatabase(context).restaurantDao())
     }
 }

@@ -18,6 +18,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import com.example.restaurantpickerapp.BottomBar
 import com.example.restaurantpickerapp.R
 import com.example.restaurantpickerapp.RestaurantPickerTopAppBar
 import com.example.restaurantpickerapp.data.models.Price
@@ -34,6 +35,9 @@ fun PriceChoiceScreen(
     viewModel: SearchViewModel,
     navigateBack: () -> Unit,
     navigateToSelectMeal: () -> Unit,
+    onHomeButtonClicked: () -> Unit,
+    onFavoriteButtonClicked: () -> Unit,
+    onSearchButtonClicked: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val searchCityUiState by viewModel.uiState.collectAsState()
@@ -43,6 +47,13 @@ fun PriceChoiceScreen(
                 title = stringResource(PriceChoiceDestination.titleResource),
                 canNavigateBack = true,
                 navigateUp = navigateBack
+            )
+        },
+        bottomBar = {
+            BottomBar(
+                onHomeButtonClicked = onHomeButtonClicked,
+                onSearchButtonClicked = onSearchButtonClicked,
+                onFavoriteButtonClicked = onFavoriteButtonClicked
             )
         }
     ) { innerPadding ->

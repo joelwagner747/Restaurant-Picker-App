@@ -8,6 +8,6 @@ class RestaurantPickerApplication: Application() {
     lateinit var container: AppContainerInterface
     override fun onCreate() {
         super.onCreate()
-        container = DefaultAppContainer()
+        container = DefaultAppContainer(this)
     }
 }

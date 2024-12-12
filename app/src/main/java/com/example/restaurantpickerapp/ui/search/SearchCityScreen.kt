@@ -36,6 +36,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.restaurantpickerapp.BottomBar
 import com.example.restaurantpickerapp.R
 import com.example.restaurantpickerapp.RestaurantPickerTopAppBar
 import com.example.restaurantpickerapp.data.models.City
@@ -53,6 +54,9 @@ object SearchCityDestination : NavigationDestination {
 fun SearchCityScreen(
     viewModel: SearchViewModel,
     navigateToPriceChoice: () -> Unit,
+    onHomeButtonClicked: () -> Unit,
+    onFavoriteButtonClicked: () -> Unit,
+    onSearchButtonClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
@@ -63,6 +67,13 @@ fun SearchCityScreen(
                 title = stringResource(SearchCityDestination.titleResource),
                 canNavigateBack = false,
                 scrollBehavior = scrollBehavior
+            )
+        },
+        bottomBar = {
+            BottomBar(
+                onHomeButtonClicked = onHomeButtonClicked,
+                onSearchButtonClicked = onSearchButtonClicked,
+                onFavoriteButtonClicked = onFavoriteButtonClicked
             )
         }
     ) { innerPadding ->

@@ -22,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.restaurantpickerapp.BottomBar
 import com.example.restaurantpickerapp.R
 import com.example.restaurantpickerapp.RestaurantPickerTopAppBar
 import com.example.restaurantpickerapp.ui.navigation.NavigationDestination
@@ -38,6 +39,9 @@ fun SelectMealScreen(
     viewModel: SearchViewModel,
     navigateBack: () -> Unit,
     navigateToNext: () -> Unit,
+    onHomeButtonClicked: () -> Unit,
+    onFavoriteButtonClicked: () -> Unit,
+    onSearchButtonClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val searchUiState by viewModel.uiState.collectAsState()
@@ -48,6 +52,13 @@ fun SelectMealScreen(
                 title = stringResource(SelectMealDestination.titleResource),
                 canNavigateBack = true,
                 navigateUp = navigateBack
+            )
+        },
+        bottomBar = {
+            BottomBar(
+                onHomeButtonClicked = onHomeButtonClicked,
+                onSearchButtonClicked = onSearchButtonClicked,
+                onFavoriteButtonClicked = onFavoriteButtonClicked
             )
         }
     ) { innerPadding ->
