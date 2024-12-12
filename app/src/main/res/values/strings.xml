@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Restaurant Picker App</string>
+    <string name="app_name">Eat Away</string>
     
     <string name="breakfast">Breakfast</string>
     <string name="lunch">Lunch</string>
@@ -52,7 +52,7 @@
 
     <string name="coffee">Coffee</string>
     <string name="baked_goods">Baked Goods</string>
-    <string name="traditional_breakfast">traditional_breakfast</string>
+    <string name="traditional_breakfast">Traditional Breakfast</string>
 
     <string name="back_button">Back Button</string>
     <string name="pick_a_meal">Pick a Meal</string>
@@ -71,4 +71,12 @@
     <string name="by_region">By Region</string>
     <string name="search">Search</string>
     <string name="here_is_where_you_can_go">Here is where you can go</string>
+    <string name="home">Home</string>
+    <string name="favorites">Favorites</string>
+    <string name="attention">Attention</string>
+    <string name="delete_question">Are you sure you want to delete?</string>
+    <string name="no">No</string>
+    <string name="yes">Yes</string>
+    <string name="delete">Delete</string>
+    <string name="add_to_favorites">Add To Favorites</string>
 </resources>

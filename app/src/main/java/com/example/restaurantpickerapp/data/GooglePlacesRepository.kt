@@ -32,7 +32,7 @@ class GooglePlacesRepository(
                 val listOfResults = apiResponse.results
                 val nextPageToken: String? = apiResponse.nextPageToken
                 listOfResults.forEach { result: Restaurant ->
-                    if (result.id != null && result.name != null) {
+                    if (result.id != null && result.name != null && result.address != null) {
                         if (result.openHours?.openNow == true && result.priceLevel == price.value && result.businessStatus == "OPERATIONAL") {
                             result.keyword = keyword
                             restaurantMap[result.id] = result

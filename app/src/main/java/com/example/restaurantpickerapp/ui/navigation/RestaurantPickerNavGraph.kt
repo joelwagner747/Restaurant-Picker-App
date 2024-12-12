@@ -8,6 +8,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import com.example.restaurantpickerapp.ui.AppViewModelProvider
+import com.example.restaurantpickerapp.ui.favorite.FavoritesDestination
+import com.example.restaurantpickerapp.ui.favorite.FavoritesScreen
+import com.example.restaurantpickerapp.ui.home.HomeBody
+import com.example.restaurantpickerapp.ui.home.HomeDestination
+import com.example.restaurantpickerapp.ui.home.HomeScreen
 import com.example.restaurantpickerapp.ui.search.PriceChoiceDestination
 import com.example.restaurantpickerapp.ui.search.PriceChoiceScreen
 import com.example.restaurantpickerapp.ui.search.RestaurantResultsDestination
@@ -31,43 +36,95 @@ fun RestaurantPickerNavHost(
 
     NavHost(
         navController = navController,
-        startDestination = "SearchRestaurants",
+        startDestination = HomeDestination.route,
         modifier = modifier
     ) {
         navigation(startDestination = SearchCityDestination.route, route = "SearchRestaurants") {
             composable(SearchCityDestination.route) {
                 SearchCityScreen(
                     viewModel = searchViewModel,
-                    navigateToPriceChoice = { navController.navigate(PriceChoiceDestination.route) }
+                    navigateToPriceChoice = { navController.navigate(PriceChoiceDestination.route) },
+                    onHomeButtonClicked = { navController.navigate(HomeDestination.route) },
+                    onFavoriteButtonClicked = { navController.navigate(FavoritesDestination.route) },
+                    onSearchButtonClicked = {
+                        searchViewModel.clearSearch()
+                        navController.navigate("SearchRestaurants")
+                    }
                 )
             }
             composable(PriceChoiceDestination.route) {
                 PriceChoiceScreen(
                     viewModel = searchViewModel,
                     navigateBack = { navController.popBackStack() },
-                    navigateToSelectMeal = { navController.navigate(SelectMealDestination.route) }
+                    navigateToSelectMeal = { navController.navigate(SelectMealDestination.route) },
+                    onHomeButtonClicked = { navController.navigate(HomeDestination.route) },
+                    onFavoriteButtonClicked = { navController.navigate(FavoritesDestination.route) },
+                    onSearchButtonClicked = {
+                        searchViewModel.clearSearch()
+                        navController.navigate("SearchRestaurants")
+                    }
                 )
             }
             composable(SelectMealDestination.route) {
                 SelectMealScreen(
                     navigateBack = { navController.popBackStack() },
                     viewModel = searchViewModel,
-                    navigateToNext = { navController.navigate(SelectFoodDestination.route) }
+                    navigateToNext = { navController.navigate(SelectFoodDestination.route) },
+                    onHomeButtonClicked = { navController.navigate(HomeDestination.route) },
+                    onFavoriteButtonClicked = { navController.navigate(FavoritesDestination.route) },
+                    onSearchButtonClicked = {
+                        searchViewModel.clearSearch()
+                        navController.navigate("SearchRestaurants")
+                    }
                 )
             }
             composable(SelectFoodDestination.route) {
                 SelectFoodScreen(
                     viewModel = searchViewModel,
                     navigateBack = { navController.popBackStack() },
-                    navigateToNext = { navController.navigate(RestaurantResultsDestination.route) }
+                    navigateToNext = { navController.navigate(RestaurantResultsDestination.route) },
+                    onHomeButtonClicked = { navController.navigate(HomeDestination.route) },
+                    onFavoriteButtonClicked = { navController.navigate(FavoritesDestination.route) },
+                    onSearchButtonClicked = {
+                        searchViewModel.clearSearch()
+                        navController.navigate("SearchRestaurants")
+                    }
                 )
             }
             composable(RestaurantResultsDestination.route) {
                 RestaurantResultsScreen(
                     viewModel = searchViewModel,
-                    navigateBack = { navController.popBackStack() }
+                    navigateBack = { navController.popBackStack() },
+                    onHomeButtonClicked = { navController.navigate(HomeDestination.route) },
+                    onFavoriteButtonClicked = { navController.navigate(FavoritesDestination.route) },
+                    onSearchButtonClicked = {
+                        searchViewModel.clearSearch()
+                        navController.navigate("SearchRestaurants")
+                    }
                 )
             }
+        }
+
+        composable(FavoritesDestination.route) {
+            FavoritesScreen(
+                onHomeButtonClicked = { navController.navigate(HomeDestination.route) },
+                onFavoriteButtonClicked = { navController.navigate(FavoritesDestination.route) },
+                onSearchButtonClicked = {
+                    searchViewModel.clearSearch()
+                    navController.navigate("SearchRestaurants")
+                }
+            )
+        }
+
+        composable(HomeDestination.route) {
+            HomeScreen(
+                onHomeButtonClicked = { navController.navigate(HomeDestination.route) },
+                onFavoriteButtonClicked = { navController.navigate(FavoritesDestination.route) },
+                onSearchButtonClicked = {
+                    searchViewModel.clearSearch()
+                    navController.navigate("SearchRestaurants")
+                }
+            )
         }
 
     }

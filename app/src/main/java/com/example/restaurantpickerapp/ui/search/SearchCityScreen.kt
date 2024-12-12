@@ -1,19 +1,27 @@
 package com.example.restaurantpickerapp.ui.search
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
@@ -31,11 +39,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.restaurantpickerapp.BottomBar
 import com.example.restaurantpickerapp.R
 import com.example.restaurantpickerapp.RestaurantPickerTopAppBar
 import com.example.restaurantpickerapp.data.models.City
@@ -53,6 +64,9 @@ object SearchCityDestination : NavigationDestination {
 fun SearchCityScreen(
     viewModel: SearchViewModel,
     navigateToPriceChoice: () -> Unit,
+    onHomeButtonClicked: () -> Unit,
+    onFavoriteButtonClicked: () -> Unit,
+    onSearchButtonClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
@@ -64,6 +78,32 @@ fun SearchCityScreen(
                 canNavigateBack = false,
                 scrollBehavior = scrollBehavior
             )
+        },
+        bottomBar = {
+            BottomBar(
+                onHomeButtonClicked = onHomeButtonClicked,
+                onSearchButtonClicked = onSearchButtonClicked,
+                onFavoriteButtonClicked = onFavoriteButtonClicked
+            )
+        },
+        floatingActionButton = {
+            if (searchCityUiState.possibleCities is PossibleCityState.Success) {
+                Button(
+                    onClick = {
+                        if (searchCityUiState.selectedCity != null) {
+                            navigateToPriceChoice()
+                        }
+                    },
+                    enabled = searchCityUiState.selectedCity != null,
+                    shape = RoundedCornerShape(8.dp),
+                    modifier = Modifier.size(height = 60.dp, width = 150.dp)
+                ) {
+                    Text(
+                        stringResource(R.string.select),
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                }
+            }
         }
     ) { innerPadding ->
         SearchCityBody(
@@ -77,6 +117,7 @@ fun SearchCityScreen(
             selectedCity = searchCityUiState.selectedCity,
             onCitySelected = { viewModel.selectCity(it) },
             navigateToPriceChoice = navigateToPriceChoice,
+            clearCity = { viewModel.clearCity() },
             modifier = Modifier.padding(innerPadding)
         )
     }
@@ -94,6 +135,7 @@ fun SearchCityBody(
     selectedCity: City?,
     onCitySelected: (City) -> Unit,
     navigateToPriceChoice: () -> Unit,
+    clearCity: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -106,7 +148,8 @@ fun SearchCityBody(
             state = state,
             onCityNameChanged = onCityNameChanged,
             onStateNameChanged = onStateNameChanged,
-            onSearchStarted = onSearchStarted
+            onSearchStarted = onSearchStarted,
+            clearCity = clearCity
         )
         if (searchStarted) {
             DisplaySearch(
@@ -126,6 +169,8 @@ fun SearchFields(
     onCityNameChanged: (String) -> Unit,
     onStateNameChanged: (String) -> Unit,
     onSearchStarted: () -> Unit,
+    clearCity: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     OutlinedTextField(
         value = cityName,
@@ -133,17 +178,24 @@ fun SearchFields(
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
         label = { Text(stringResource(R.string.city_name))}
     )
+    Spacer(Modifier.height(dimensionResource(R.dimen.padding_medium)))
     OutlinedTextField(
         value = state,
         onValueChange = { onStateNameChanged(it) },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
         label = { Text(stringResource(R.string.state))}
     )
+    Spacer(Modifier.height(dimensionResource(R.dimen.padding_medium)))
     Button(
-        onClick = onSearchStarted,
-        enabled = cityName != "" && state != ""
+        onClick = {
+            clearCity()
+            onSearchStarted()
+        },
+        enabled = cityName != "" && state != "",
+        shape = RoundedCornerShape(8.dp),
+        modifier = Modifier.size(height = 60.dp, width = 150.dp)
     ) {
-        Text(stringResource(R.string.search_for_city))
+        Text(stringResource(R.string.search_for_city), style = MaterialTheme.typography.bodyLarge)
     }
 }
 
@@ -187,19 +239,18 @@ fun DisplaySuccessfulSearchResults(
                     onCitySelected = onCitySelected
                 )
             }
-        }
-        Button(
-            onClick = {
-                if (selectedCity != null) {
-                    navigateToPriceChoice()
-                }
-            },
-            enabled = selectedCity != null,
-        ) {
-            Text(stringResource(R.string.select))
+            item {
+                Spacer(Modifier.height(70.dp))
+            }
         }
     } else {
-        Text(stringResource(R.string.your_search_did_not_yield_any_results))
+        Row(
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.width(300.dp).padding(dimensionResource(R.dimen.padding_medium))
+        ) {
+            Text(stringResource(R.string.your_search_did_not_yield_any_results))
+        }
     }
 }
 
@@ -235,11 +286,21 @@ fun SearchResultItem(
     modifier: Modifier = Modifier
 ) {
     Card(
-        modifier = modifier.clickable(true, onClick = { onCitySelected(city) }),
+        modifier = modifier
+            .clickable(true, onClick = { onCitySelected(city) })
+            .padding(dimensionResource(R.dimen.padding_medium))
+            .border(1.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(14.dp))
+            .size(width = 250.dp, height = 50.dp),
         colors = CardDefaults.cardColors(containerColor = if (city.placeId == (selectedCity?.placeId
                 ?: "")
-        ) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.background)
+        ) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.outline)
     ) {
-        Text(city.name ?: "Unknown")
+        Column (
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(city.name ?: "Unknown", style = MaterialTheme.typography.displayMedium)
+        }
     }
 }
