@@ -2,9 +2,12 @@ package com.example.restaurantpickerapp.ui.search
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.restaurantpickerapp.data.PlacesRepository
 import com.example.restaurantpickerapp.data.SelectionOptionsRepositoryInterface
 import com.example.restaurantpickerapp.data.models.City
+import com.example.restaurantpickerapp.data.models.Price
+import com.example.restaurantpickerapp.ui.search.model.FoodSearchType
 import com.example.restaurantpickerapp.ui.search.model.PossibleCityState
 import com.example.restaurantpickerapp.ui.search.model.SearchUiState
 import com.example.restaurantpickerapp.ui.search.model.SearchedRestaurantsState
@@ -43,20 +46,14 @@ class SearchViewModel(
         }
     }
 
-    fun addKeyword(keyword: String) {
+    fun changeKeyword(keyword: String) {
         _uiState.update { currentState ->
             val mutableKeywordsSet: MutableSet<String> = currentState.keywords.toMutableSet()
-            mutableKeywordsSet.add(keyword)
-            currentState.copy(
-                keywords = mutableKeywordsSet.toSet()
-            )
-        }
-    }
-
-    fun removeKeyword(keyword: String) {
-        _uiState.update { currentState ->
-            val mutableKeywordsSet: MutableSet<String> = currentState.keywords.toMutableSet()
-            mutableKeywordsSet.remove(keyword)
+            if (mutableKeywordsSet.contains(keyword)) {
+                mutableKeywordsSet.remove(keyword)
+            } else {
+                mutableKeywordsSet.add(keyword)
+            }
             currentState.copy(
                 keywords = mutableKeywordsSet.toSet()
             )
@@ -66,7 +63,8 @@ class SearchViewModel(
     fun setMeal(meal: String) {
         _uiState.update { currentState ->
             currentState.copy(
-                meal = meal
+                meal = meal,
+                keywords = setOf()
             )
         }
     }
@@ -75,6 +73,22 @@ class SearchViewModel(
         _uiState.update { currentState ->
             currentState.copy(
                 selectedCity = city
+            )
+        }
+    }
+
+    fun setPrice(price: Price) {
+        _uiState.update { currentState ->
+            currentState.copy(
+                price = price
+            )
+        }
+    }
+
+    fun setCurrentFoodSearchType(newFoodSearchType: FoodSearchType) {
+        _uiState.update { currentState ->
+            currentState.copy(
+                currentFoodSearchType = newFoodSearchType
             )
         }
     }
@@ -105,18 +119,27 @@ class SearchViewModel(
         }
     }
 
+    fun setSearchedRestaurantStateLoading() {
+        _uiState.update { currentState ->
+            currentState.copy(
+                searchedRestaurants = SearchedRestaurantsState.Loading
+            )
+        }
+    }
+
     fun searchForRestaurants() {
-        if (_uiState.value.selectedCity != null && _uiState.value.meal != null && _uiState.value.keywords.isNotEmpty()) {
+        if (_uiState.value.selectedCity != null && _uiState.value.meal != null && _uiState.value.keywords.isNotEmpty() && _uiState.value.price != null && _uiState.value.selectedCity?.placeId != null) {
             viewModelScope.launch {
                 _uiState.update { currentState ->
-                    if (currentState.selectedCity != null && currentState.meal != null) {
+                    if (currentState.selectedCity != null && currentState.meal != null && currentState.price != null && currentState.selectedCity.placeId != null) {
                         currentState.copy(
                             searchedRestaurants = try {
                                 SearchedRestaurantsState.Success(
                                     googlePlacesRepository.getRestaurants(
                                         cityId = currentState.selectedCity.placeId,
                                         meal = currentState.meal,
-                                        keywords = currentState.keywords.toList()
+                                        keywords = currentState.keywords.toList(),
+                                        price = currentState.price
                                     )
                                 )
                             } catch (e: IOException) {
@@ -153,5 +176,9 @@ class SearchViewModel(
 
     fun getDessertFoodTypeOptions() : List<Int> {
         return selectionOptionsRepository.getDessertFoodTypeOptions()
+    }
+
+    fun getPriceChoices() : List<Price> {
+        return selectionOptionsRepository.getPriceChoices()
     }
 }

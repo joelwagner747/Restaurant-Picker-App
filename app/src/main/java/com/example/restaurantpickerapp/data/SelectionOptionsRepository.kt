@@ -1,6 +1,7 @@
 package com.example.restaurantpickerapp.data
 
 import com.example.restaurantpickerapp.R
+import com.example.restaurantpickerapp.data.models.Price
 
 class SelectionOptionsRepository : SelectionOptionsRepositoryInterface {
 
@@ -98,5 +99,9 @@ class SelectionOptionsRepository : SelectionOptionsRepositoryInterface {
             R.string.brazilian,
             R.string.mexican,
         )
+    }
+
+    override fun getPriceChoices(): List<Price> {
+        return listOf(Price.ONE, Price.TWO, Price.THREE, Price.FOUR)
     }
 }

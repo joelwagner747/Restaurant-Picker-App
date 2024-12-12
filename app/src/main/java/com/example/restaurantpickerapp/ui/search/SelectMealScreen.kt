@@ -1,12 +1,16 @@
 package com.example.restaurantpickerapp.ui.search
 
 import androidx.annotation.StringRes
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -33,7 +37,7 @@ object SelectMealDestination : NavigationDestination {
 fun SelectMealScreen(
     viewModel: SearchViewModel,
     navigateBack: () -> Unit,
-    onMealSelected: (String) -> Unit,
+    navigateToNext: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val searchUiState by viewModel.uiState.collectAsState()
@@ -43,12 +47,15 @@ fun SelectMealScreen(
             RestaurantPickerTopAppBar(
                 title = stringResource(SelectMealDestination.titleResource),
                 canNavigateBack = true,
+                navigateUp = navigateBack
             )
         }
     ) { innerPadding ->
         SelectMealBody(
             mealTypesList = viewModel.getMealsOptions(),
-            onButtonPressed = onMealSelected,
+            mealSelected = searchUiState.meal,
+            navigateToNext = navigateToNext,
+            selectMeal = { viewModel.setMeal(it) },
             modifier = Modifier.padding(innerPadding)
         )
     }
@@ -57,7 +64,9 @@ fun SelectMealScreen(
 @Composable
 fun SelectMealBody(
     mealTypesList: List<Int>,
-    onButtonPressed: (String) -> Unit,
+    mealSelected: String?,
+    navigateToNext: () -> Unit,
+    selectMeal: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -68,8 +77,19 @@ fun SelectMealBody(
         mealTypesList.forEach { mealName ->
             MealItem(
                 mealName = mealName,
-                onButtonPressed = onButtonPressed,
+                mealSelected = mealSelected,
+                selectMeal = selectMeal
             )
+        }
+        Button(
+            onClick = {
+                if (mealSelected != null) {
+                    navigateToNext()
+                }
+            },
+            enabled = mealSelected != null
+        ) {
+            Text(stringResource(R.string.select))
         }
     }
 }
@@ -78,17 +98,16 @@ fun SelectMealBody(
 fun MealItem(
     @StringRes
     mealName: Int,
-    onButtonPressed: (String) -> Unit,
+    mealSelected: String?,
+    selectMeal: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val meal = stringResource(mealName)
-    Button(
-        onClick = { onButtonPressed(meal) },
-        modifier = modifier
+    Card(
+        modifier = modifier.clickable(true, onClick = { selectMeal(meal) }),
+        colors = CardDefaults.cardColors(containerColor = if (meal == mealSelected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.background)
     ) {
-        Text(
-            text = meal
-        )
+        Text(meal)
     }
 }
 

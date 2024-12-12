@@ -3,7 +3,9 @@ package com.example.restaurantpickerapp.network
 import com.example.restaurantpickerapp.data.models.City
 import com.example.restaurantpickerapp.data.models.CitySuggestionsResponse
 import com.example.restaurantpickerapp.data.models.Location
+import com.example.restaurantpickerapp.data.models.LocationResponse
 import com.example.restaurantpickerapp.data.models.Restaurant
+import com.example.restaurantpickerapp.data.models.RestaurantResponse
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -14,8 +16,9 @@ interface GooglePlacesApiService {
         @Query("radius") radius: Int = 5000,
         @Query("type") type: String = "restaurant",
         @Query("keyword") keyword: String,
+        //@Query("opennow") openNow: Boolean = true,
         @Query("key") apiKey: String,
-    ): List<Restaurant>
+    ): RestaurantResponse
 
     @GET("autocomplete/json")
     suspend fun getCity(
@@ -30,5 +33,5 @@ interface GooglePlacesApiService {
         @Query("place_id") id: String,
         @Query("fields") fields: String = "geometry",
         @Query("key") apiKey: String
-    ) : Location?
+    ) : LocationResponse
 }

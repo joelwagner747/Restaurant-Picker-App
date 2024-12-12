@@ -2,6 +2,7 @@ package com.example.restaurantpickerapp.ui.search
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -9,7 +10,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
@@ -21,6 +24,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -51,12 +55,14 @@ fun SearchCityScreen(
     navigateToPriceChoice: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val searchCityUiState by viewModel.uiState.collectAsState()
     Scaffold(
         topBar = {
             RestaurantPickerTopAppBar(
                 title = stringResource(SearchCityDestination.titleResource),
                 canNavigateBack = false,
+                scrollBehavior = scrollBehavior
             )
         }
     ) { innerPadding ->
@@ -70,6 +76,7 @@ fun SearchCityScreen(
             onSearchStarted = { viewModel.searchForCitiesByName() },
             selectedCity = searchCityUiState.selectedCity,
             onCitySelected = { viewModel.selectCity(it) },
+            navigateToPriceChoice = navigateToPriceChoice,
             modifier = Modifier.padding(innerPadding)
         )
     }
@@ -86,6 +93,7 @@ fun SearchCityBody(
     onSearchStarted: () -> Unit,
     selectedCity: City?,
     onCitySelected: (City) -> Unit,
+    navigateToPriceChoice: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -105,6 +113,7 @@ fun SearchCityBody(
                 possibleCitiesState = possibleCities,
                 selectedCity = selectedCity,
                 onCitySelected = onCitySelected,
+                navigateToPriceChoice = navigateToPriceChoice
             )
         }
     }
@@ -143,6 +152,7 @@ fun DisplaySearch(
     possibleCitiesState: PossibleCityState,
     selectedCity: City?,
     onCitySelected: (City) -> Unit,
+    navigateToPriceChoice: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     when(possibleCitiesState) {
@@ -150,6 +160,7 @@ fun DisplaySearch(
             possibleCitiesState.possibleCities,
             selectedCity,
             onCitySelected,
+            navigateToPriceChoice
         )
         is PossibleCityState.Loading -> LoadingScreen(modifier = modifier.fillMaxSize())
         is PossibleCityState.Error -> ErrorScreen(modifier = modifier.fillMaxSize())
@@ -161,6 +172,7 @@ fun DisplaySuccessfulSearchResults(
     results: List<City>,
     selectedCity: City?,
     onCitySelected: (City) -> Unit,
+    navigateToPriceChoice: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     if (results.isNotEmpty()) {
@@ -179,7 +191,7 @@ fun DisplaySuccessfulSearchResults(
         Button(
             onClick = {
                 if (selectedCity != null) {
-
+                    navigateToPriceChoice()
                 }
             },
             enabled = selectedCity != null,
@@ -228,6 +240,6 @@ fun SearchResultItem(
                 ?: "")
         ) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.background)
     ) {
-        Text(city.name)
+        Text(city.name ?: "Unknown")
     }
 }

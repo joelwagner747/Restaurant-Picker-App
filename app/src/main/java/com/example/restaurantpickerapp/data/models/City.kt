@@ -6,12 +6,12 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class City(
     @SerialName(value = "description")
-    val name: String,
+    val name: String? = null,
     @SerialName(value = "place_id")
-    val placeId: String
+    val placeId: String? = null
 )
 
 @Serializable
 data class CitySuggestionsResponse(
-    val predictions: List<City>
+    val predictions: List<City>? = null
 )

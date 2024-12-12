@@ -1,7 +1,9 @@
 package com.example.restaurantpickerapp.ui.search.model
 
+import com.example.restaurantpickerapp.R
 import com.example.restaurantpickerapp.data.models.City
 import com.example.restaurantpickerapp.data.models.Location
+import com.example.restaurantpickerapp.data.models.Price
 import com.example.restaurantpickerapp.data.models.Restaurant
 
 sealed interface SearchedRestaurantsState {
@@ -16,12 +18,9 @@ sealed interface PossibleCityState {
     object Loading : PossibleCityState
 }
 
-
-enum class Price(val value: Int) {
-    ONE(1),
-    TWO(2),
-    THREE(3),
-    FOUR(4),
+enum class FoodSearchType(val value: Int) {
+    BY_FOOD_TYPE(R.string.by_food_type),
+    BY_REGION(R.string.by_region)
 }
 
 data class SearchUiState(
@@ -31,6 +30,7 @@ data class SearchUiState(
     val selectedCity: City? = null,
     val cityName: String,
     val state: String,
+    val currentFoodSearchType: FoodSearchType = FoodSearchType.BY_FOOD_TYPE,
     var searchStarted: Boolean = false,
     val possibleCities: PossibleCityState = PossibleCityState.Loading,
     val searchedRestaurants: SearchedRestaurantsState = SearchedRestaurantsState.Loading
