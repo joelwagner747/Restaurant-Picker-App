@@ -91,6 +91,14 @@ class SearchViewModel(
         }
     }
 
+    fun clearCity() {
+        _uiState.update { currentState ->
+            currentState.copy(
+                selectedCity = null
+            )
+        }
+    }
+
     fun setPrice(price: Price) {
         _uiState.update { currentState ->
             currentState.copy(
@@ -223,7 +231,9 @@ fun convertRestaurantToRestaurantEntity(restaurant: Restaurant) : RestaurantEnti
         priceLevel = restaurant.priceLevel,
         rating = restaurant.rating,
         numOfUserRatings = restaurant.numOfUserRatings,
-        address = restaurant.address ?: ""
+        address = restaurant.address ?: "",
+        photoReference = restaurant.photos?.get(0)?.photoReference ?: "",
+        maxWidth = restaurant.photos?.get(0)?.width ?: 0
     )
 }
 

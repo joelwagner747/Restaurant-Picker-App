@@ -12,4 +12,6 @@ data class RestaurantEntity(
     val rating: Double,
     val numOfUserRatings: Int,
     val address: String,
+    val photoReference: String,
+    val maxWidth: Int,
 )

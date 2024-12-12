@@ -6,7 +6,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.example.restaurantpickerapp.data.RestaurantDao
 
-@Database(entities = [RestaurantEntity::class], version = 1, exportSchema = false)
+@Database(entities = [RestaurantEntity::class], version = 2, exportSchema = false)
 abstract class RestaurantDatabase : RoomDatabase() {
 
     abstract fun restaurantDao(): RestaurantDao
@@ -18,7 +18,7 @@ abstract class RestaurantDatabase : RoomDatabase() {
         fun getDatabase(context: Context): RestaurantDatabase {
             return Instance ?: synchronized(this) {
                 Room.databaseBuilder(context, RestaurantDatabase::class.java, "restaurant_database")
-                    .fallbackToDestructiveMigrationFrom()
+                    .fallbackToDestructiveMigration()
                     .build()
                     .also { Instance = it }
             }

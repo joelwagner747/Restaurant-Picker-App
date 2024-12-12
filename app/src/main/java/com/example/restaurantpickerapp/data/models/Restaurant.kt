@@ -20,6 +20,7 @@ data class Restaurant(
     @SerialName(value = "business_status")
     val businessStatus: String? = null,
     var keyword: String? = null,
+    val photos: List<Photos>? = null
 )
 
 @Serializable
@@ -33,4 +34,11 @@ data class RestaurantResponse(
 data class OpenHours(
     @SerialName(value = "open_now")
     val openNow: Boolean
+)
+
+@Serializable
+data class Photos(
+    val width: Int? = null,
+    @SerialName(value = "photo_reference")
+    val photoReference: String? = null
 )

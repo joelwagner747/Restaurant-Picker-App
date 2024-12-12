@@ -1,10 +1,16 @@
 package com.example.restaurantpickerapp.ui.favorite
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.AlertDialog
@@ -24,11 +30,19 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
+import coil.request.ImageResult
 import com.example.restaurantpickerapp.BottomBar
+import com.example.restaurantpickerapp.BuildConfig
 import com.example.restaurantpickerapp.R
 import com.example.restaurantpickerapp.RestaurantPickerTopAppBar
 import com.example.restaurantpickerapp.data.models.Price
@@ -42,6 +56,12 @@ import com.example.restaurantpickerapp.ui.search.SearchViewModel
 object FavoritesDestination : NavigationDestination {
     override val route = "Favorites"
     override val titleResource = R.string.favorites
+}
+
+object PhotoUrl {
+    val baseUrl = "https://maps.googleapis.com/maps/api/place/photo?maxwidth="
+
+
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -99,7 +119,9 @@ fun FavoritesBody(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier.fillMaxSize()
     ) {
-        LazyColumn {
+        LazyColumn(
+            modifier = Modifier.padding(dimensionResource(R.dimen.padding_small))
+        ) {
             items(items = restaurantsList, key = { it.id }) { item ->
                 FavoriteItem(
                     restaurant = item,
@@ -120,24 +142,75 @@ fun FavoriteItem(
 ) {
     var deleteConfirmationRequired by rememberSaveable { mutableStateOf(false) }
     Card(
-        modifier = modifier
+        modifier = modifier.padding(dimensionResource(R.dimen.padding_small))
     ) {
-        Column(
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Button(
-                onClick = { deleteConfirmationRequired = true },
-                shape = MaterialTheme.shapes.small,
-                modifier = Modifier.fillMaxWidth()
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier.fillMaxSize()
             ) {
-                Text(stringResource(R.string.delete))
+                Column(
+                    horizontalAlignment = Alignment.Start,
+                    verticalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier.weight(3f).padding(dimensionResource(R.dimen.padding_small)).fillMaxHeight()
+                ) {
+                    if (restaurant.photoReference != "" && restaurant.maxWidth != 0) {
+                        AsyncImage(
+                            model = ImageRequest.Builder(context = LocalContext.current)
+                                .data("${PhotoUrl.baseUrl}${restaurant.maxWidth}&photo_reference=${restaurant.photoReference}&key=${BuildConfig.Google_Places_API_KEY}")
+                                .crossfade(true)
+                                .build(),
+                            contentDescription = null,
+                            contentScale = ContentScale.Crop,
+                            error = painterResource(R.drawable.ic_broken_image),
+                            placeholder = painterResource(R.drawable.loading_img),
+                            modifier = Modifier.size(height = 140.dp, width = 150.dp)
+                        )
+                    } else {
+                        Image(
+                            painter = painterResource(R.drawable.backupfoodimage),
+                            contentScale = ContentScale.Crop,
+                            contentDescription = null,
+                            modifier = Modifier.size(height = 130.dp, width = 150.dp)
+                        )
+                    }
+                    Row(
+                        horizontalArrangement = Arrangement.Start,
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(
+                                top = dimensionResource(R.dimen.padding_small),
+                                bottom = dimensionResource(R.dimen.padding_small),
+                                start = dimensionResource(R.dimen.padding_medium),
+                                end = dimensionResource(R.dimen.padding_medium)
+                            )
+                    ) {
+                        Button(
+                            onClick = { deleteConfirmationRequired = true },
+                            shape = MaterialTheme.shapes.small,
+                            modifier = Modifier
+                        ) {
+                            Text(stringResource(R.string.delete))
+                        }
+                    }
+                }
+                Column(
+                    horizontalAlignment = Alignment.Start,
+                    verticalArrangement = Arrangement.SpaceAround,
+                    modifier = Modifier.weight(4f).fillMaxHeight().padding(dimensionResource(R.dimen.padding_small))
+                ) {
+                    Text(restaurant.name, style = MaterialTheme.typography.labelMedium)
+                    Spacer(Modifier.height(25.dp))
+                    Text("Rating: ${restaurant.rating}")
+                    Spacer(Modifier.height(10.dp))
+                    Text("${restaurant.numOfUserRatings} Reviews")
+                    Spacer(Modifier.height(10.dp))
+                    Text("Price Range: ${pricesMap[restaurant.priceLevel]?.priceRange ?: "Unknown"}")
+                    Spacer(Modifier.height(10.dp))
+                    Text(restaurant.address)
+                }
+
             }
-            Text(restaurant.name)
-            Text("Rating: ${restaurant.rating}")
-            Text("Number of Reviews: ${restaurant.numOfUserRatings}")
-            Text("Price Range: ${pricesMap[restaurant.priceLevel]?.priceRange ?: "Unknown"}")
-            Text(restaurant.address)
 
             if (deleteConfirmationRequired) {
                 DeleteConfirmationDialog(
@@ -150,7 +223,6 @@ fun FavoriteItem(
                 )
             }
         }
-    }
 }
 
 @Composable

@@ -85,6 +85,25 @@ fun SearchCityScreen(
                 onSearchButtonClicked = onSearchButtonClicked,
                 onFavoriteButtonClicked = onFavoriteButtonClicked
             )
+        },
+        floatingActionButton = {
+            if (searchCityUiState.possibleCities is PossibleCityState.Success) {
+                Button(
+                    onClick = {
+                        if (searchCityUiState.selectedCity != null) {
+                            navigateToPriceChoice()
+                        }
+                    },
+                    enabled = searchCityUiState.selectedCity != null,
+                    shape = RoundedCornerShape(8.dp),
+                    modifier = Modifier.size(height = 60.dp, width = 150.dp)
+                ) {
+                    Text(
+                        stringResource(R.string.select),
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                }
+            }
         }
     ) { innerPadding ->
         SearchCityBody(
@@ -98,6 +117,7 @@ fun SearchCityScreen(
             selectedCity = searchCityUiState.selectedCity,
             onCitySelected = { viewModel.selectCity(it) },
             navigateToPriceChoice = navigateToPriceChoice,
+            clearCity = { viewModel.clearCity() },
             modifier = Modifier.padding(innerPadding)
         )
     }
@@ -115,6 +135,7 @@ fun SearchCityBody(
     selectedCity: City?,
     onCitySelected: (City) -> Unit,
     navigateToPriceChoice: () -> Unit,
+    clearCity: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -127,7 +148,8 @@ fun SearchCityBody(
             state = state,
             onCityNameChanged = onCityNameChanged,
             onStateNameChanged = onStateNameChanged,
-            onSearchStarted = onSearchStarted
+            onSearchStarted = onSearchStarted,
+            clearCity = clearCity
         )
         if (searchStarted) {
             DisplaySearch(
@@ -147,6 +169,8 @@ fun SearchFields(
     onCityNameChanged: (String) -> Unit,
     onStateNameChanged: (String) -> Unit,
     onSearchStarted: () -> Unit,
+    clearCity: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     OutlinedTextField(
         value = cityName,
@@ -163,7 +187,10 @@ fun SearchFields(
     )
     Spacer(Modifier.height(dimensionResource(R.dimen.padding_medium)))
     Button(
-        onClick = onSearchStarted,
+        onClick = {
+            clearCity()
+            onSearchStarted()
+        },
         enabled = cityName != "" && state != "",
         shape = RoundedCornerShape(8.dp),
         modifier = Modifier.size(height = 60.dp, width = 150.dp)
@@ -212,18 +239,9 @@ fun DisplaySuccessfulSearchResults(
                     onCitySelected = onCitySelected
                 )
             }
-        }
-        Button(
-            onClick = {
-                if (selectedCity != null) {
-                    navigateToPriceChoice()
-                }
-            },
-            enabled = selectedCity != null,
-            shape = RoundedCornerShape(8.dp),
-            modifier = Modifier.size(height = 60.dp, width = 150.dp)
-        ) {
-            Text(stringResource(R.string.select), style = MaterialTheme.typography.bodyLarge)
+            item {
+                Spacer(Modifier.height(70.dp))
+            }
         }
     } else {
         Row(

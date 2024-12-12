@@ -6,9 +6,11 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -67,6 +69,22 @@ fun SelectFoodScreen(
                 onSearchButtonClicked = onSearchButtonClicked,
                 onFavoriteButtonClicked = onFavoriteButtonClicked
             )
+        },
+        floatingActionButton = {
+            Button(
+                onClick = {
+                    if (searchUiState.meal != null && searchUiState.selectedCity != null && searchUiState.keywords.isNotEmpty() && searchUiState.price != null) {
+                        viewModel.setSearchedRestaurantStateLoading()
+                        viewModel.searchForRestaurants()
+                        navigateToNext()
+                    }
+                },
+                enabled = searchUiState.keywords.isNotEmpty(),
+                shape = RoundedCornerShape(8.dp),
+                modifier = Modifier.size(height = 60.dp, width = 150.dp)
+            ) {
+                Text(stringResource(R.string.search), style = MaterialTheme.typography.bodyLarge)
+            }
         }
     ) { innerPadding ->
         val foodTypeList = when(searchUiState.meal) {
@@ -128,7 +146,8 @@ fun SelectFoodBody(
         }
         if (currentFoodSearchType == FoodSearchType.BY_FOOD_TYPE || currentMeal == stringResource(R.string.breakfast) || currentMeal == stringResource(R.string.dessert)) {
             LazyColumn(
-                modifier = Modifier
+                modifier = Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 items(items = sortedFoodTypeList) { food ->
                     FoodItem(
@@ -137,10 +156,14 @@ fun SelectFoodBody(
                         changeKeyWord = changeKeyWord
                     )
                  }
+                item {
+                    Spacer(Modifier.height(70.dp))
+                }
             }
         } else if (currentFoodSearchType == FoodSearchType.BY_REGION && currentMeal != stringResource(R.string.breakfast) && currentMeal != stringResource(R.string.dessert)) {
             LazyColumn(
-                modifier = Modifier
+                modifier = Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 items(items = sortedRegionList) { food ->
                     FoodItem(
@@ -149,18 +172,10 @@ fun SelectFoodBody(
                         changeKeyWord = changeKeyWord
                     )
                 }
+                item {
+                    Spacer(Modifier.height(70.dp))
+                }
             }
-        }
-        Button(
-            onClick = {
-                searchForRestaurants()
-                navigateToNext()
-            },
-            enabled = keywords.isNotEmpty(),
-            shape = RoundedCornerShape(8.dp),
-            modifier = Modifier.size(height = 60.dp, width = 150.dp)
-        ) {
-            Text(stringResource(R.string.search), style = MaterialTheme.typography.bodyLarge)
         }
 
     }
@@ -176,7 +191,7 @@ fun FoodItem(
     Card(
         modifier = modifier
             .clickable(true, onClick = { changeKeyWord(food) })
-            .padding(dimensionResource(R.dimen.padding_medium))
+            .padding(dimensionResource(R.dimen.padding_small))
             .border(1.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(14.dp))
             .size(width = 250.dp, height = 50.dp),
         colors = CardDefaults.cardColors(containerColor = if (keywords.contains(food)) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.outline)
