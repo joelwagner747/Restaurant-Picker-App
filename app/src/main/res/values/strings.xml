@@ -1,3 +1,74 @@
 <resources>
     <string name="app_name">Restaurant Picker App</string>
+    
+    <string name="breakfast">Breakfast</string>
+    <string name="lunch">Lunch</string>
+    <string name="dinner">Dinner</string>
+    <string name="dessert">Dessert</string>
+    
+    <string name="american">American</string>
+    <string name="chinese">Chinese</string>
+    <string name="japanese">Japanese</string>
+    <string name="vietnamese">Vietnamese</string>
+    <string name="thai">Thai</string>
+    <string name="korean">Korean</string>
+    <string name="indian">Indian</string>
+    <string name="middle_eastern">Middle Eastern</string>
+    <string name="taiwanese">Taiwanese</string>
+    <string name="mediterranean">Mediterranean</string>
+    <string name="greek">Greek</string>
+    <string name="french">French</string>
+    <string name="italian">Italian</string>
+    <string name="german">German</string>
+    <string name="polish">Polish</string>
+    <string name="scandinavian">Scandinavian</string>
+    <string name="brazilian">Brazilian</string>
+    <string name="mexican">Mexican</string>
+
+    <string name="pizza">Pizza</string>
+    <string name="pasta">Pasta</string>
+    <string name="burgers">Burgers</string>
+    <string name="steak">Steak</string>
+    <string name="barbeque">Barbeque</string>
+    <string name="soup">Soup</string>
+    <string name="salad">Salad</string>
+    <string name="sushi">Sushi</string>
+    <string name="sandwiches">Sandwiches</string>
+    <string name="tacos">Tacos</string>
+    <string name="burritos">Burritos</string>
+    <string name="bowls">Bowls</string>
+    <string name="noodles">Noodles</string>
+    <string name="ramen">Ramen</string>
+    <string name="wings">Wings</string>
+    <string name="nachos">Nachos</string>
+    <string name="fries">Fries</string>
+    <string name="smoothies">Smoothies</string>
+
+    <string name="ice_cream">Ice Cream</string>
+    <string name="cookies">Cookies</string>
+    <string name="cake">Cake</string>
+    <string name="cupcakes">Cupcakes</string>
+    <string name="pie">Pie</string>
+
+    <string name="coffee">Coffee</string>
+    <string name="baked_goods">Baked Goods</string>
+    <string name="traditional_breakfast">traditional_breakfast</string>
+
+    <string name="back_button">Back Button</string>
+    <string name="pick_a_meal">Pick a Meal</string>
+    <string name="search_for_a_location">Search for a Location</string>
+    <string name="city_name">City Name</string>
+    <string name="state">State</string>
+    <string name="search_for_city">Search For City</string>
+    <string name="search_was_unable_to_connect">Search was unable to connect</string>
+    <string name="retry">Retry</string>
+    <string name="loading">Loading</string>
+    <string name="select">Select</string>
+    <string name="your_search_did_not_yield_any_results">Your search did not yield any results try searching again with different keywords</string>
+    <string name="how_much_do_you_want_to_spend">How much do you want to spend?</string>
+    <string name="what_are_you_in_the_mood_for">What are you in the mood for?</string>
+    <string name="by_food_type">By food type</string>
+    <string name="by_region">By Region</string>
+    <string name="search">Search</string>
+    <string name="here_is_where_you_can_go">Here is where you can go</string>
 </resources>
