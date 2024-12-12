@@ -6,7 +6,6 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.restaurantpickerapp.RestaurantPickerApplication
 import com.example.restaurantpickerapp.ui.favorite.FavoritesViewModel
-import com.example.restaurantpickerapp.ui.search.SearchCityViewModel
 import com.example.restaurantpickerapp.ui.search.SearchViewModel
 
 
@@ -17,12 +16,6 @@ object AppViewModelProvider {
                 googlePlacesRepository = restaurantPickerApplication().container.placesRepository,
                 selectionOptionsRepository = restaurantPickerApplication().container.selectionOptionsRepository,
                 restaurantsRepository = restaurantPickerApplication().container.restaurantRepository
-            )
-        }
-
-        initializer {
-            SearchCityViewModel(
-                googlePlacesRepository = restaurantPickerApplication().container.placesRepository
             )
         }
 
